@@ -144,7 +144,7 @@
         <a class="btn btn-primary" href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">Baixar a última versão</a>
         <a class="btn btn-secondary" href="#roadmap">Roadmap</a>
       </div>
-      <p class="version" id="version">Versão 0.10.0 · pré-lançamento · macOS e Linux</p>
+      <p class="version" id="version">Versão 0.11.0 · pré-lançamento · macOS e Linux</p>
     </div>
     <pre><code>$ edsqlite loja.db
 edsqlite&gt; SELECT p.nome, sum(v.qtd) AS vendidos
@@ -162,7 +162,7 @@ QUERY PLAN
   <section>
     <h2>É estável? Dá para usar?</h2>
     <div class="verdict">
-      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.10 serve para experimentar,
+      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.11 serve para experimentar,
       aprender e trabalhar com dados que você pode recriar. Para dados que não podem ser perdidos,
       espere a v1.0: até lá, o formato do arquivo ainda pode mudar sem migração.
     </div>
@@ -173,6 +173,7 @@ QUERY PLAN
           <li>SQL do dia a dia: CREATE TABLE/INDEX, INSERT, UPDATE, DELETE e SELECT com WHERE, ORDER BY e LIMIT.</li>
           <li>JOINs, GROUP BY, HAVING, DISTINCT e subconsultas.</li>
           <li><code>CASE</code>, <code>CAST</code> e as funções de texto <code>substr</code>, <code>replace</code> e <code>trim</code>.</li>
+          <li>Restrições: <code>NOT NULL</code>, <code>DEFAULT</code>, <code>UNIQUE</code>, <code>PRIMARY KEY</code> e <code>INTEGER PRIMARY KEY</code>.</li>
           <li>Commit atômico mesmo com queda de energia ou <code>kill -9</code>.</li>
           <li>Várias conexões ao mesmo tempo, com locks e modo WAL.</li>
           <li>Resultados iguais aos do SQLite em mais de 8 milhões de consultas geradas.</li>
@@ -183,7 +184,7 @@ QUERY PLAN
         <ul class="no">
           <li>Formato de arquivo congelado (vem na v1.0).</li>
           <li>API com parâmetros (<code>prepare</code>/<code>bind</code>/<code>step</code>).</li>
-          <li>Restrições, LEFT JOIN, UNION, ALTER TABLE e muitas funções.</li>
+          <li><code>CHECK</code>, chaves estrangeiras, LEFT JOIN, UNION, ALTER TABLE e muitas funções.</li>
           <li>Locks no Windows.</li>
           <li>Fuzzing.</li>
         </ul>
@@ -192,7 +193,7 @@ QUERY PLAN
   </section>
 
   <section>
-    <h2>O que já tem na 0.10</h2>
+    <h2>O que já tem na 0.11</h2>
     <div class="features">
       <div class="feature">
         <h3>SQL com tipos do SQLite</h3>
@@ -209,6 +210,10 @@ QUERY PLAN
       <div class="feature">
         <h3>Subconsultas</h3>
         <p>Escalares, <code>IN (SELECT ...)</code> e <code>EXISTS</code>, correlacionadas ou não.</p>
+      </div>
+      <div class="feature">
+        <h3>Restrições</h3>
+        <p><code>NOT NULL</code>, <code>DEFAULT</code>, <code>UNIQUE</code>, <code>PRIMARY KEY</code> e <code>INTEGER PRIMARY KEY</code>, que é o próprio rowid, como no SQLite. <code>PRAGMA table_info</code> mostra tudo.</p>
       </div>
       <div class="feature">
         <h3>CASE, CAST e texto</h3>
@@ -231,7 +236,7 @@ QUERY PLAN
       <li>Baixe o <code>.tar.gz</code> do seu sistema na <a href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">última versão</a>.</li>
       <li>Extraia e coloque o <code>edsqlite</code> num diretório do seu <code>PATH</code>:</li>
     </ol>
-    <pre><code>tar xzf edsqlite-0.10.0-macos-arm64.tar.gz
+    <pre><code>tar xzf edsqlite-0.11.0-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version</code></pre>
     <p class="note">No macOS, o binário não é assinado pela Apple. Se o sistema bloquear a execução, rode uma vez:</p>
@@ -255,8 +260,8 @@ edsqlite --version</code></pre>
     <h2>Roadmap</h2>
     <div class="roadmap">
       <div class="stage">
-        <h3>v0.1 a v0.10 <span class="tag done">concluídas</span></h3>
-        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação, subconsultas, <code>CASE</code>, <code>CAST</code> e funções de texto.</p>
+        <h3>v0.1 a v0.11 <span class="tag done">concluídas</span></h3>
+        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação, subconsultas, <code>CASE</code>, <code>CAST</code>, funções de texto e restrições.</p>
       </div>
 
       <div class="stage">
@@ -279,7 +284,7 @@ edsqlite --version</code></pre>
         <h3>Recursos de SQL que faltam</h3>
         <p class="when">Os mais usados primeiro.</p>
         <ul>
-          <li><b>Restrições:</b> <code>NOT NULL</code>, <code>DEFAULT</code>, <code>INTEGER PRIMARY KEY</code> (o rowid como coluna) e, depois, <code>CHECK</code> e chaves estrangeiras.</li>
+          <li><b>Restrições:</b> <code>CHECK</code>, <code>AUTOINCREMENT</code>, chaves estrangeiras e <code>ON CONFLICT</code>/<code>REPLACE</code>.</li>
           <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>.</li>
           <li><b>Funções:</b> <code>instr</code>, <code>printf</code>, as de data e hora e as de janela.</li>
           <li><b>Schema:</b> <code>ALTER TABLE</code> (renomear e acrescentar colunas), <code>CREATE VIEW</code>, <code>COLLATE</code>, índices DESC.</li>
