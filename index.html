@@ -144,7 +144,7 @@
         <a class="btn btn-primary" href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">Baixar a última versão</a>
         <a class="btn btn-secondary" href="#roadmap">Roadmap</a>
       </div>
-      <p class="version" id="version">Versão 0.9.0 · pré-lançamento · macOS e Linux</p>
+      <p class="version" id="version">Versão 0.10.0 · pré-lançamento · macOS e Linux</p>
     </div>
     <pre><code>$ edsqlite loja.db
 edsqlite&gt; SELECT p.nome, sum(v.qtd) AS vendidos
@@ -162,7 +162,7 @@ QUERY PLAN
   <section>
     <h2>É estável? Dá para usar?</h2>
     <div class="verdict">
-      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.9 serve para experimentar,
+      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.10 serve para experimentar,
       aprender e trabalhar com dados que você pode recriar. Para dados que não podem ser perdidos,
       espere a v1.0: até lá, o formato do arquivo ainda pode mudar sem migração.
     </div>
@@ -172,6 +172,7 @@ QUERY PLAN
         <ul class="yes">
           <li>SQL do dia a dia: CREATE TABLE/INDEX, INSERT, UPDATE, DELETE e SELECT com WHERE, ORDER BY e LIMIT.</li>
           <li>JOINs, GROUP BY, HAVING, DISTINCT e subconsultas.</li>
+          <li><code>CASE</code>, <code>CAST</code> e as funções de texto <code>substr</code>, <code>replace</code> e <code>trim</code>.</li>
           <li>Commit atômico mesmo com queda de energia ou <code>kill -9</code>.</li>
           <li>Várias conexões ao mesmo tempo, com locks e modo WAL.</li>
           <li>Resultados iguais aos do SQLite em mais de 8 milhões de consultas geradas.</li>
@@ -182,7 +183,7 @@ QUERY PLAN
         <ul class="no">
           <li>Formato de arquivo congelado (vem na v1.0).</li>
           <li>API com parâmetros (<code>prepare</code>/<code>bind</code>/<code>step</code>).</li>
-          <li>Restrições, LEFT JOIN, UNION, CASE, CAST, ALTER TABLE e muitas funções.</li>
+          <li>Restrições, LEFT JOIN, UNION, ALTER TABLE e muitas funções.</li>
           <li>Locks no Windows.</li>
           <li>Fuzzing.</li>
         </ul>
@@ -191,7 +192,7 @@ QUERY PLAN
   </section>
 
   <section>
-    <h2>O que já tem na 0.9</h2>
+    <h2>O que já tem na 0.10</h2>
     <div class="features">
       <div class="feature">
         <h3>SQL com tipos do SQLite</h3>
@@ -210,6 +211,10 @@ QUERY PLAN
         <p>Escalares, <code>IN (SELECT ...)</code> e <code>EXISTS</code>, correlacionadas ou não.</p>
       </div>
       <div class="feature">
+        <h3>CASE, CAST e texto</h3>
+        <p><code>CASE</code> com e sem base, <code>CAST</code> para os cinco tipos e as funções <code>substr</code>, <code>replace</code>, <code>trim</code>, <code>ltrim</code> e <code>rtrim</code>, com os detalhes do SQLite.</p>
+      </div>
+      <div class="feature">
         <h3>Transações duráveis</h3>
         <p><code>BEGIN</code>/<code>COMMIT</code>/<code>ROLLBACK</code> com rollback journal. Testado com milhares de crashes simulados e <code>kill -9</code> de verdade.</p>
       </div>
@@ -226,7 +231,7 @@ QUERY PLAN
       <li>Baixe o <code>.tar.gz</code> do seu sistema na <a href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">última versão</a>.</li>
       <li>Extraia e coloque o <code>edsqlite</code> num diretório do seu <code>PATH</code>:</li>
     </ol>
-    <pre><code>tar xzf edsqlite-0.9.0-macos-arm64.tar.gz
+    <pre><code>tar xzf edsqlite-0.10.0-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version</code></pre>
     <p class="note">No macOS, o binário não é assinado pela Apple. Se o sistema bloquear a execução, rode uma vez:</p>
@@ -238,7 +243,7 @@ edsqlite --version</code></pre>
     <h2>Como é testado</h2>
     <table>
       <tr><th>Teste</th><th>O que garante</th></tr>
-      <tr><td>Diferencial contra o SQLite 3.53</td><td>SQL aleatório (expressões, índices, JOINs, agregação, subconsultas) nos dois bancos, com resultado idêntico: 8,5 milhões de consultas e comandos, nenhuma divergência.</td></tr>
+      <tr><td>Diferencial contra o SQLite 3.53</td><td>SQL aleatório (expressões, índices, JOINs, agregação, subconsultas) nos dois bancos, com resultado idêntico: mais de 16 milhões de consultas e comandos, nenhuma divergência.</td></tr>
       <tr><td>Crash em cada operação de I/O</td><td>O banco fica sempre no estado de antes ou de depois da transação, nos dois modos de journal.</td></tr>
       <tr><td><code>kill -9</code> real</td><td>Nenhuma transação pela metade nem perdida depois de confirmada.</td></tr>
       <tr><td>Stress de concorrência</td><td>Escritor e leitores em threads e em processos, sem leitura inconsistente nem deadlock.</td></tr>
@@ -250,8 +255,8 @@ edsqlite --version</code></pre>
     <h2>Roadmap</h2>
     <div class="roadmap">
       <div class="stage">
-        <h3>v0.1 a v0.9 <span class="tag done">concluídas</span></h3>
-        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação e subconsultas.</p>
+        <h3>v0.1 a v0.10 <span class="tag done">concluídas</span></h3>
+        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação, subconsultas, <code>CASE</code>, <code>CAST</code> e funções de texto.</p>
       </div>
 
       <div class="stage">
@@ -275,8 +280,8 @@ edsqlite --version</code></pre>
         <p class="when">Os mais usados primeiro.</p>
         <ul>
           <li><b>Restrições:</b> <code>NOT NULL</code>, <code>DEFAULT</code>, <code>INTEGER PRIMARY KEY</code> (o rowid como coluna) e, depois, <code>CHECK</code> e chaves estrangeiras.</li>
-          <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, <code>CASE</code>, <code>CAST</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>.</li>
-          <li><b>Funções:</b> <code>substr</code>, <code>replace</code>, <code>trim</code>, <code>instr</code>, <code>printf</code>, as de data e hora e as de janela.</li>
+          <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>.</li>
+          <li><b>Funções:</b> <code>instr</code>, <code>printf</code>, as de data e hora e as de janela.</li>
           <li><b>Schema:</b> <code>ALTER TABLE</code> (renomear e acrescentar colunas), <code>CREATE VIEW</code>, <code>COLLATE</code>, índices DESC.</li>
         </ul>
       </div>
