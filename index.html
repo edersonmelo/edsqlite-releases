@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EDSQLite</title>
+  <meta name="description" content="Banco de dados relacional embutido, inspirado no SQLite, escrito em Rust. Status, downloads e roadmap.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta property="og:title" content="EDSQLite">
+  <meta property="og:description" content="Banco de dados relacional embutido, inspirado no SQLite, escrito em Rust.">
+  <style>
+    :root {
+      --bg: #f6f5f3;
+      --surface: #ffffff;
+      --text: #16161a;
+      --muted: #5f5f6b;
+      --border: #e4e2de;
+      --accent: #1f5f8b;
+      --accent-text: #ffffff;
+      --code-bg: #efede9;
+      --ok: #1f7a4d;
+      --warn: #a15c00;
+      --warn-bg: #fff4e0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0b0d;
+        --surface: #16161a;
+        --text: #f2f2f4;
+        --muted: #a1a1ab;
+        --border: #2a2a31;
+        --accent: #5fa8d8;
+        --accent-text: #0b0b0d;
+        --code-bg: #1d1d22;
+        --ok: #5fcf96;
+        --warn: #f0b429;
+        --warn-bg: #2a2110;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    }
+    main { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    a { color: var(--accent); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      padding: 72px 0 56px;
+    }
+    .hero .icon { width: 88px; height: 88px; }
+    h1 { font-size: 52px; line-height: 1.05; margin: 16px 0 12px; letter-spacing: -0.02em; }
+    .lead { font-size: 21px; color: var(--muted); margin: 0 0 28px; max-width: 32ch; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 22px; border-radius: 12px;
+      font-weight: 600; text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-text); }
+    .btn-secondary { border: 1px solid var(--border); color: var(--text); }
+    .version { color: var(--muted); font-size: 14px; margin-top: 14px; }
+
+    section { padding: 48px 0; border-top: 1px solid var(--border); }
+    h2 { font-size: 30px; margin: 0 0 24px; letter-spacing: -0.01em; }
+    h3 { font-size: 20px; margin: 28px 0 10px; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px;
+    }
+    .feature h3 { font-size: 17px; margin: 0 0 6px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .verdict {
+      border-radius: 16px; padding: 20px 22px; margin: 0 0 24px;
+      background: var(--warn-bg); border: 1px solid var(--border);
+    }
+    .verdict strong { color: var(--warn); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .cols ul { margin: 0; padding-left: 20px; }
+    .yes li::marker { content: "✓  "; color: var(--ok); }
+    .no li::marker { content: "✗  "; color: var(--warn); }
+
+    .roadmap { display: grid; gap: 16px; }
+    .stage {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .stage h3 { margin: 0 0 4px; }
+    .stage .when { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+    .stage ol, .stage ul { margin: 0; padding-left: 22px; }
+    .tag {
+      display: inline-block; font-size: 12px; font-weight: 600; border-radius: 999px;
+      padding: 2px 9px; margin-left: 6px; vertical-align: middle;
+      border: 1px solid var(--border); color: var(--muted);
+    }
+    .tag.done { color: var(--ok); border-color: var(--ok); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+
+    ol, ul { padding-left: 22px; }
+    li { margin-bottom: 6px; }
+    code {
+      background: var(--code-bg); border-radius: 6px;
+      padding: 2px 6px; font: 14px ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg); border-radius: 12px; padding: 14px 16px;
+      overflow-x: auto; font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    pre code { background: none; padding: 0; }
+    .note { color: var(--muted); font-size: 15px; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0 48px; color: var(--muted); font-size: 15px; text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; padding-top: 40px; gap: 32px; }
+      h1 { font-size: 40px; }
+      .features, .cols { grid-template-columns: 1fr; }
+      table { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div>
+      <img class="icon" src="icon.svg" alt="">
+      <h1>EDSQLite</h1>
+      <p class="lead">Banco de dados relacional embutido, inspirado no SQLite, escrito em Rust do zero.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">Baixar a última versão</a>
+        <a class="btn btn-secondary" href="#roadmap">Roadmap</a>
+      </div>
+      <p class="version" id="version">Versão 0.9.0 · pré-lançamento · macOS e Linux</p>
+    </div>
+    <pre><code>$ edsqlite loja.db
+edsqlite&gt; SELECT p.nome, sum(v.qtd) AS vendidos
+     ...&gt;   FROM produtos AS p
+     ...&gt;   JOIN vendas AS v ON v.produto = p.nome
+     ...&gt;   GROUP BY p.nome ORDER BY vendidos DESC;
+caneta|15
+mochila|1
+edsqlite&gt; EXPLAIN QUERY PLAN SELECT * FROM vendas
+     ...&gt;   WHERE produto = 'caneta';
+QUERY PLAN
+`--SEARCH vendas USING INDEX v_produto (produto=?)</code></pre>
+  </header>
+
+  <section>
+    <h2>É estável? Dá para usar?</h2>
+    <div class="verdict">
+      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.9 serve para experimentar,
+      aprender e trabalhar com dados que você pode recriar. Para dados que não podem ser perdidos,
+      espere a v1.0: até lá, o formato do arquivo ainda pode mudar sem migração.
+    </div>
+    <div class="cols">
+      <div>
+        <h3>Já dá para confiar</h3>
+        <ul class="yes">
+          <li>SQL do dia a dia: CREATE TABLE/INDEX, INSERT, UPDATE, DELETE e SELECT com WHERE, ORDER BY e LIMIT.</li>
+          <li>JOINs, GROUP BY, HAVING, DISTINCT e subconsultas.</li>
+          <li>Commit atômico mesmo com queda de energia ou <code>kill -9</code>.</li>
+          <li>Várias conexões ao mesmo tempo, com locks e modo WAL.</li>
+          <li>Resultados iguais aos do SQLite em mais de 8 milhões de consultas geradas.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Ainda não</h3>
+        <ul class="no">
+          <li>Formato de arquivo congelado (vem na v1.0).</li>
+          <li>API com parâmetros (<code>prepare</code>/<code>bind</code>/<code>step</code>).</li>
+          <li>Restrições, LEFT JOIN, UNION, CASE, CAST, ALTER TABLE e muitas funções.</li>
+          <li>Locks no Windows.</li>
+          <li>Fuzzing.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que já tem na 0.9</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>SQL com tipos do SQLite</h3>
+        <p>Afinidade por coluna, as cinco classes de valor, aritmética, LIKE, IN, BETWEEN e as mesmas conversões do SQLite.</p>
+      </div>
+      <div class="feature">
+        <h3>Índices e planner</h3>
+        <p>Índices simples, compostos e UNIQUE. O planner escolhe buscas por índice ou por rowid e mostra tudo no <code>EXPLAIN QUERY PLAN</code>.</p>
+      </div>
+      <div class="feature">
+        <h3>JOINs e agregação</h3>
+        <p><code>JOIN ... ON</code>, vírgula, <code>CROSS JOIN</code>, <code>count</code>, <code>sum</code>, <code>avg</code>, <code>min</code>, <code>max</code>, <code>group_concat</code>, GROUP BY, HAVING e DISTINCT.</p>
+      </div>
+      <div class="feature">
+        <h3>Subconsultas</h3>
+        <p>Escalares, <code>IN (SELECT ...)</code> e <code>EXISTS</code>, correlacionadas ou não.</p>
+      </div>
+      <div class="feature">
+        <h3>Transações duráveis</h3>
+        <p><code>BEGIN</code>/<code>COMMIT</code>/<code>ROLLBACK</code> com rollback journal. Testado com milhares de crashes simulados e <code>kill -9</code> de verdade.</p>
+      </div>
+      <div class="feature">
+        <h3>Concorrência e WAL</h3>
+        <p>Várias conexões, em threads ou processos, com <code>busy_timeout</code>. No modo WAL, leitores não bloqueiam o escritor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Instalação</h2>
+    <ol>
+      <li>Baixe o <code>.tar.gz</code> do seu sistema na <a href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">última versão</a>.</li>
+      <li>Extraia e coloque o <code>edsqlite</code> num diretório do seu <code>PATH</code>:</li>
+    </ol>
+    <pre><code>tar xzf edsqlite-0.9.0-macos-arm64.tar.gz
+sudo mv edsqlite /usr/local/bin/
+edsqlite --version</code></pre>
+    <p class="note">No macOS, o binário não é assinado pela Apple. Se o sistema bloquear a execução, rode uma vez:</p>
+    <pre><code>xattr -d com.apple.quarantine /usr/local/bin/edsqlite</code></pre>
+    <p class="note">Uso: <code>edsqlite dados.db</code> abre (ou cria) um banco; <code>edsqlite</code> sem argumento usa um banco temporário em memória. Os comandos terminam em <code>;</code>. Comandos do REPL: <code>.headers on|off</code>, <code>.tables</code>, <code>.indexes</code> e <code>.exit</code>. Também dá para rodar um script: <code>edsqlite dados.db &lt; script.sql</code>.</p>
+  </section>
+
+  <section>
+    <h2>Como é testado</h2>
+    <table>
+      <tr><th>Teste</th><th>O que garante</th></tr>
+      <tr><td>Diferencial contra o SQLite 3.53</td><td>SQL aleatório (expressões, índices, JOINs, agregação, subconsultas) nos dois bancos, com resultado idêntico: 8,5 milhões de consultas e comandos, nenhuma divergência.</td></tr>
+      <tr><td>Crash em cada operação de I/O</td><td>O banco fica sempre no estado de antes ou de depois da transação, nos dois modos de journal.</td></tr>
+      <tr><td><code>kill -9</code> real</td><td>Nenhuma transação pela metade nem perdida depois de confirmada.</td></tr>
+      <tr><td>Stress de concorrência</td><td>Escritor e leitores em threads e em processos, sem leitura inconsistente nem deadlock.</td></tr>
+      <tr><td>Relatórios estilo TPC-H</td><td>Consultas de relatório sobre 10 mil itens dão exatamente o resultado do SQLite.</td></tr>
+    </table>
+  </section>
+
+  <section id="roadmap">
+    <h2>Roadmap</h2>
+    <div class="roadmap">
+      <div class="stage">
+        <h3>v0.1 a v0.9 <span class="tag done">concluídas</span></h3>
+        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação e subconsultas.</p>
+      </div>
+
+      <div class="stage">
+        <h3>v1.0 · API estável e testes obsessivos <span class="tag">próxima</span></h3>
+        <p class="when">O que falta para chamar de versão estável.</p>
+        <ol>
+          <li><b>Formato do arquivo congelado.</b> Hoje ele ainda pode mudar, e antes da v1.0 não há migração: um banco criado hoje pode não abrir numa versão futura. Na v1.0, o formato fica documentado e com política de compatibilidade (versão no cabeçalho, recusar versão futura, semver na API).</li>
+          <li><b>API com parâmetros:</b> <code>prepare</code>, <code>bind</code>, <code>step</code>, <code>reset</code> e <code>finalize</code>, com <code>?</code>, <code>?N</code> e <code>:nome</code> no SQL. Sem isso, um programa precisa montar o SQL como texto, o que é incômodo e abre espaço para SQL injection.</li>
+          <li><b>Fuzzing</b> com <code>cargo-fuzz</code>: SQL arbitrário e arquivos de banco corrompidos, sempre sem panic.</li>
+          <li>Códigos de erro estáveis (<code>Busy</code>, <code>Corrupt</code>, <code>Constraint</code>, <code>Misuse</code>...).</li>
+          <li>Recompilação automática de um comando preparado quando o schema muda.</li>
+          <li>Queda de energia simulada em toda a suíte de testes, não só nas transações.</li>
+          <li>Cobertura de testes medida (meta: 90% nos módulos de armazenamento e da VM).</li>
+          <li>Parte do corpus de conformidade <i>sqllogictest</i> do SQLite como teste.</li>
+          <li>Opcional: uma API C (<code>extern "C"</code> com header gerado), para usar de outras linguagens.</li>
+        </ol>
+      </div>
+
+      <div class="stage">
+        <h3>Recursos de SQL que faltam</h3>
+        <p class="when">Os mais usados primeiro.</p>
+        <ul>
+          <li><b>Restrições:</b> <code>NOT NULL</code>, <code>DEFAULT</code>, <code>INTEGER PRIMARY KEY</code> (o rowid como coluna) e, depois, <code>CHECK</code> e chaves estrangeiras.</li>
+          <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, <code>CASE</code>, <code>CAST</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>.</li>
+          <li><b>Funções:</b> <code>substr</code>, <code>replace</code>, <code>trim</code>, <code>instr</code>, <code>printf</code>, as de data e hora e as de janela.</li>
+          <li><b>Schema:</b> <code>ALTER TABLE</code> (renomear e acrescentar colunas), <code>CREATE VIEW</code>, <code>COLLATE</code>, índices DESC.</li>
+        </ul>
+      </div>
+
+      <div class="stage">
+        <h3>Plataformas e desempenho</h3>
+        <ul>
+          <li><b>Locks no Windows.</b> Hoje eles só existem em Unix (macOS e Linux); no Windows, duas conexões no mesmo arquivo não se protegem uma da outra.</li>
+          <li>Instalação por Homebrew e pacote para Linux.</li>
+          <li>Planner com estatísticas (<code>ANALYZE</code>), índices cobertos e busca com <code>IN</code>.</li>
+          <li>Transações maiores que a memória e ORDER BY com espaço em disco.</li>
+          <li><code>VACUUM</code>, para devolver ao disco o espaço livre.</li>
+        </ul>
+      </div>
+
+      <div class="stage">
+        <h3>Depois</h3>
+        <ul>
+          <li>Busca de texto completo, JSON e funções definidas pelo usuário.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Desenvolvido por Ederson Melo · <a href="https://edgo.app.br">edgo.app.br</a>
+</footer>
+
+<script>
+  // Mostra a versão da última release publicada; sem rede, fica o texto do HTML.
+  fetch("https://api.github.com/repos/edersonmelo/edsqlite-releases/releases/latest")
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(release => {
+      document.getElementById("version").textContent =
+        "Versão " + release.tag_name.replace(/^v/, "") + " · pré-lançamento · macOS e Linux";
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>

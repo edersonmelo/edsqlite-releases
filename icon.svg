@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#1f5f8b"/>
+  <g fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round">
+    <ellipse cx="64" cy="36" rx="32" ry="12"/>
+    <path d="M32 36v56c0 6.6 14.3 12 32 12s32-5.4 32-12V36"/>
+    <path d="M32 64c0 6.6 14.3 12 32 12s32-5.4 32-12"/>
+  </g>
+  <text x="64" y="95" font-family="ui-monospace,Menlo,monospace" font-size="20" font-weight="700" fill="#f0b429" text-anchor="middle">ED</text>
+</svg>
