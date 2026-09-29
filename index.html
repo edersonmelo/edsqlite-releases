@@ -144,7 +144,7 @@
         <a class="btn btn-primary" href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">Baixar a última versão</a>
         <a class="btn btn-secondary" href="#roadmap">Roadmap</a>
       </div>
-      <p class="version" id="version">Versão 0.13.0 · pré-lançamento · macOS e Linux</p>
+      <p class="version" id="version">Versão 0.13.1 · pré-lançamento · macOS e Linux</p>
     </div>
     <pre><code>$ edsqlite loja.db
 edsqlite&gt; SELECT p.nome, sum(v.qtd) AS vendidos
@@ -247,12 +247,12 @@ QUERY PLAN
       <li>Baixe o <code>.tar.gz</code> do seu sistema na <a href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">última versão</a>.</li>
       <li>Extraia e coloque o <code>edsqlite</code> num diretório do seu <code>PATH</code>:</li>
     </ol>
-    <pre><code>tar xzf edsqlite-0.13.0-macos-arm64.tar.gz
+    <pre><code>tar xzf edsqlite-0.13.1-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version</code></pre>
     <p class="note">No macOS, o binário não é assinado pela Apple. Se o sistema bloquear a execução, rode uma vez:</p>
     <pre><code>xattr -d com.apple.quarantine /usr/local/bin/edsqlite</code></pre>
-    <p class="note">DBeaver: baixe o <code>edsqlite-jdbc-&lt;versão&gt;.jar</code> e cadastre-o uma vez em <b>Database → Driver Manager → New</b> (Driver Type <code>Generic</code>, Class Name <code>br.app.edgo.edsqlite.EdsqliteDriver</code>, URL Template <code>jdbc:edsqlite:{file}</code>, <b>Embedded</b>, e o .jar em <b>Libraries</b>). Depois, é como no SQLite: nova conexão, <b>EDSQLite</b>, o caminho do arquivo e <b>Finish</b>. Não precisa de Java instalado: o driver roda no Java do DBeaver.</p>
+    <p class="note">DBeaver: baixe o <code>edsqlite-jdbc-&lt;versão&gt;.jar</code> e cadastre-o uma vez em <b>Database → Driver Manager → New</b> (Driver Type <code>Generic</code>, Class Name <code>br.app.edgo.edsqlite.jdbc.EDSQLiteDriver</code>, URL Template <code>jdbc:edsqlite:{file}</code>, <b>Embedded</b>, e o .jar em <b>Libraries</b>). Depois, é como no SQLite: nova conexão, <b>EDSQLite</b>, o caminho do arquivo e <b>Finish</b>. Não precisa de Java instalado: o driver roda no Java do DBeaver.</p>
     <p class="note">Biblioteca C: os pacotes <code>edsqlite-capi-&lt;versão&gt;-&lt;sistema&gt;.tar.gz</code> trazem <code>include/edsqlite.h</code> e a biblioteca (<code>.dylib</code> ou <code>.so</code>, e <code>.a</code>), para usar o EDSQLite de C, C++ ou de um driver. A de Linux usa a glibc 2.34 ou mais nova (Ubuntu 22.04+, Debian 12+, RHEL 9+).</p>
     <p class="note">Uso: <code>edsqlite dados.db</code> abre (ou cria) um banco; <code>edsqlite</code> sem argumento usa um banco temporário em memória. Os comandos terminam em <code>;</code>. Comandos do REPL: <code>.headers on|off</code>, <code>.tables</code>, <code>.indexes</code> e <code>.exit</code>. Também dá para rodar um script: <code>edsqlite dados.db &lt; script.sql</code>.</p>
   </section>

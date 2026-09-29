@@ -45,7 +45,7 @@ Baixe o `.tar.gz` do seu sistema na [última release](https://github.com/ederson
 
 Para o **DBeaver**, baixe o `edsqlite-jdbc-<versão>.jar` e cadastre-o uma vez em
 **Database → Driver Manager → New**: Driver Type `Generic`, Class Name
-`br.app.edgo.edsqlite.EdsqliteDriver`, URL Template `jdbc:edsqlite:{file}`, marque
+`br.app.edgo.edsqlite.jdbc.EDSQLiteDriver`, URL Template `jdbc:edsqlite:{file}`, marque
 **Embedded** e adicione o `.jar` em **Libraries**. Depois, é como no SQLite: nova conexão,
 **EDSQLite**, o caminho do arquivo e **Finish**. Não precisa de Java instalado: o driver roda
 no Java do próprio DBeaver.
@@ -61,14 +61,14 @@ parte, com `include/edsqlite.h`, `lib/` (dinâmica e estática) e um README:
 | Linux, ARM64 (glibc 2.34+) | `edsqlite-capi-<versão>-linux-arm64.tar.gz` |
 
 ```bash
-tar xzf edsqlite-capi-0.13.0-macos-arm64.tar.gz
-cc -Iedsqlite-capi-0.13.0-macos-arm64/include programa.c \
-   -Ledsqlite-capi-0.13.0-macos-arm64/lib -ledsqlite_capi \
-   -Wl,-rpath,$PWD/edsqlite-capi-0.13.0-macos-arm64/lib
+tar xzf edsqlite-capi-0.13.1-macos-arm64.tar.gz
+cc -Iedsqlite-capi-0.13.1-macos-arm64/include programa.c \
+   -Ledsqlite-capi-0.13.1-macos-arm64/lib -ledsqlite_capi \
+   -Wl,-rpath,$PWD/edsqlite-capi-0.13.1-macos-arm64/lib
 ```
 
 ```bash
-tar xzf edsqlite-0.13.0-macos-arm64.tar.gz
+tar xzf edsqlite-0.13.1-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version
 ```
