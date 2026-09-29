@@ -28,7 +28,7 @@ ainda sai como pré-lançamento, antes do selo de v1.0.
 - **Concorrência:** várias conexões, com locks e modo WAL.
 - **Comandos preparados** (`prepare`/`bind`/`step`, com `?`, `?N` e `:nome`), recompilados sozinhos quando o schema muda, e códigos de erro com os números do SQLite.
 - **Formato do arquivo congelado**, documentado byte a byte e com política de compatibilidade.
-- **API C** no formato da API C do SQLite (ainda não distribuída nas releases, que trazem só o `edsqlite` de linha de comando).
+- **API C** no formato da API C do SQLite, com a biblioteca (`.dylib`/`.so` e `.a`) e o header nos downloads. Vários comandos podem rodar ao mesmo tempo na mesma conexão, e `last_insert_rowid` dá o rowid do último INSERT.
 - **Conferido contra o SQLite 3.53** em mais de 8 milhões de consultas geradas e em 6106 consultas do corpus oficial *sqllogictest*, sem divergência.
 - **Testado com queda de energia** em toda a suíte (uns 5800 crashes simulados por execução), fuzzing noturno e 94,7% das linhas cobertas.
 
@@ -43,8 +43,32 @@ Baixe o `.tar.gz` do seu sistema na [última release](https://github.com/ederson
 | Linux, x86_64 (estático) | `edsqlite-<versão>-linux-x86_64.tar.gz` |
 | Linux, ARM64 (estático) | `edsqlite-<versão>-linux-arm64.tar.gz` |
 
+Para o **DBeaver**, baixe o `edsqlite-jdbc-<versão>.jar` e cadastre-o uma vez em
+**Database → Driver Manager → New**: Driver Type `Generic`, Class Name
+`br.app.edgo.edsqlite.EdsqliteDriver`, URL Template `jdbc:edsqlite:{file}`, marque
+**Embedded** e adicione o `.jar` em **Libraries**. Depois, é como no SQLite: nova conexão,
+**EDSQLite**, o caminho do arquivo e **Finish**. Não precisa de Java instalado: o driver roda
+no Java do próprio DBeaver.
+
+A biblioteca com a API C (para usar o EDSQLite de C, C++ ou de um driver) vem em pacotes à
+parte, com `include/edsqlite.h`, `lib/` (dinâmica e estática) e um README:
+
+| Sistema | Arquivo |
+|---------|---------|
+| macOS, Apple Silicon | `edsqlite-capi-<versão>-macos-arm64.tar.gz` |
+| macOS, Intel | `edsqlite-capi-<versão>-macos-x86_64.tar.gz` |
+| Linux, x86_64 (glibc 2.34+) | `edsqlite-capi-<versão>-linux-x86_64.tar.gz` |
+| Linux, ARM64 (glibc 2.34+) | `edsqlite-capi-<versão>-linux-arm64.tar.gz` |
+
 ```bash
-tar xzf edsqlite-0.12.0-macos-arm64.tar.gz
+tar xzf edsqlite-capi-0.13.0-macos-arm64.tar.gz
+cc -Iedsqlite-capi-0.13.0-macos-arm64/include programa.c \
+   -Ledsqlite-capi-0.13.0-macos-arm64/lib -ledsqlite_capi \
+   -Wl,-rpath,$PWD/edsqlite-capi-0.13.0-macos-arm64/lib
+```
+
+```bash
+tar xzf edsqlite-0.13.0-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version
 ```
