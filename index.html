@@ -144,7 +144,7 @@
         <a class="btn btn-primary" href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">Baixar a última versão</a>
         <a class="btn btn-secondary" href="#roadmap">Roadmap</a>
       </div>
-      <p class="version" id="version">Versão 0.11.0 · pré-lançamento · macOS e Linux</p>
+      <p class="version" id="version">Versão 0.12.0 · pré-lançamento · macOS e Linux</p>
     </div>
     <pre><code>$ edsqlite loja.db
 edsqlite&gt; SELECT p.nome, sum(v.qtd) AS vendidos
@@ -162,9 +162,10 @@ QUERY PLAN
   <section>
     <h2>É estável? Dá para usar?</h2>
     <div class="verdict">
-      <strong>Dá para usar, mas ainda não é uma versão estável.</strong> A 0.11 serve para experimentar,
-      aprender e trabalhar com dados que você pode recriar. Para dados que não podem ser perdidos,
-      espere a v1.0: até lá, o formato do arquivo ainda pode mudar sem migração.
+      <strong>Dá para usar, e o formato do arquivo não muda mais.</strong> A 0.12 tem tudo o que
+      estava planejado para a v1.0: o formato está congelado e documentado, e todo banco criado desde a
+      0.3 vai abrir em todas as versões 1.x. A partir da 0.12, uma versão antiga que recebe um banco mais
+      novo o recusa sem tocar nele. Ela ainda sai como pré-lançamento, antes do selo de v1.0.
     </div>
     <div class="cols">
       <div>
@@ -176,24 +177,24 @@ QUERY PLAN
           <li>Restrições: <code>NOT NULL</code>, <code>DEFAULT</code>, <code>UNIQUE</code>, <code>PRIMARY KEY</code> e <code>INTEGER PRIMARY KEY</code>.</li>
           <li>Commit atômico mesmo com queda de energia ou <code>kill -9</code>.</li>
           <li>Várias conexões ao mesmo tempo, com locks e modo WAL.</li>
-          <li>Resultados iguais aos do SQLite em mais de 8 milhões de consultas geradas.</li>
+          <li>Resultados iguais aos do SQLite em mais de 8 milhões de consultas geradas e em 6 mil consultas do corpus oficial de testes do SQLite.</li>
+          <li>Formato do arquivo congelado, com política de compatibilidade.</li>
         </ul>
       </div>
       <div>
         <h3>Ainda não</h3>
         <ul class="no">
-          <li>Formato de arquivo congelado (vem na v1.0).</li>
-          <li>API com parâmetros (<code>prepare</code>/<code>bind</code>/<code>step</code>).</li>
-          <li><code>CHECK</code>, chaves estrangeiras, LEFT JOIN, UNION, ALTER TABLE e muitas funções.</li>
+          <li><code>CHECK</code>, chaves estrangeiras, LEFT JOIN, UNION, views, ALTER TABLE e muitas funções.</li>
           <li>Locks no Windows.</li>
-          <li>Fuzzing.</li>
+          <li>Driver JDBC (para ferramentas como o DBeaver).</li>
+          <li>Biblioteca e API C nos downloads: as releases trazem só o <code>edsqlite</code> de linha de comando.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>O que já tem na 0.11</h2>
+    <h2>O que já tem na 0.12</h2>
     <div class="features">
       <div class="feature">
         <h3>SQL com tipos do SQLite</h3>
@@ -227,6 +228,18 @@ QUERY PLAN
         <h3>Concorrência e WAL</h3>
         <p>Várias conexões, em threads ou processos, com <code>busy_timeout</code>. No modo WAL, leitores não bloqueiam o escritor.</p>
       </div>
+      <div class="feature">
+        <h3>Comandos preparados</h3>
+        <p><code>prepare</code>, <code>bind</code> e <code>step</code>, com parâmetros <code>?</code>, <code>?N</code> e <code>:nome</code>. Um comando preparado é recompilado sozinho quando outra conexão muda o schema.</p>
+      </div>
+      <div class="feature">
+        <h3>Formato estável</h3>
+        <p>O arquivo está documentado byte a byte e congelado. Os códigos de erro têm os números do SQLite (<code>BUSY</code>, <code>CONSTRAINT</code>, <code>NOTADB</code>...).</p>
+      </div>
+      <div class="feature">
+        <h3>API C</h3>
+        <p>No formato da API C do SQLite (<code>edsqlite_open</code>, <code>prepare_v2</code>, <code>step</code>, <code>bind_*</code>, <code>column_*</code>), com header para C e C++. É o caminho para drivers em outras linguagens.</p>
+      </div>
     </div>
   </section>
 
@@ -236,7 +249,7 @@ QUERY PLAN
       <li>Baixe o <code>.tar.gz</code> do seu sistema na <a href="https://github.com/edersonmelo/edsqlite-releases/releases/latest">última versão</a>.</li>
       <li>Extraia e coloque o <code>edsqlite</code> num diretório do seu <code>PATH</code>:</li>
     </ol>
-    <pre><code>tar xzf edsqlite-0.11.0-macos-arm64.tar.gz
+    <pre><code>tar xzf edsqlite-0.12.0-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version</code></pre>
     <p class="note">No macOS, o binário não é assinado pela Apple. Se o sistema bloquear a execução, rode uma vez:</p>
@@ -253,6 +266,10 @@ edsqlite --version</code></pre>
       <tr><td><code>kill -9</code> real</td><td>Nenhuma transação pela metade nem perdida depois de confirmada.</td></tr>
       <tr><td>Stress de concorrência</td><td>Escritor e leitores em threads e em processos, sem leitura inconsistente nem deadlock.</td></tr>
       <tr><td>Relatórios estilo TPC-H</td><td>Consultas de relatório sobre 10 mil itens dão exatamente o resultado do SQLite.</td></tr>
+      <tr><td>sqllogictest do SQLite</td><td>6106 consultas do corpus oficial de conformidade do SQLite, com as respostas que o próprio SQLite deu.</td></tr>
+      <tr><td>Queda de energia em toda a suíte</td><td>Cada script de teste roda com um crash simulado em cada operação de I/O: uns 5800 crashes a cada execução.</td></tr>
+      <tr><td>Fuzzing</td><td>SQL arbitrário e arquivos de banco corrompidos, todas as noites: nunca um panic, só erros.</td></tr>
+      <tr><td>Cobertura</td><td>94,7% das linhas cobertas pelos testes, com metas mínimas nos módulos de armazenamento e da VM.</td></tr>
     </table>
   </section>
 
@@ -260,24 +277,35 @@ edsqlite --version</code></pre>
     <h2>Roadmap</h2>
     <div class="roadmap">
       <div class="stage">
-        <h3>v0.1 a v0.11 <span class="tag done">concluídas</span></h3>
-        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação, subconsultas, <code>CASE</code>, <code>CAST</code>, funções de texto e restrições.</p>
+        <h3>v0.1 a v0.12 <span class="tag done">concluídas</span></h3>
+        <p class="when">Parser, VM de bytecode, B-tree em disco, tipos com afinidade, índices e planner, transações duráveis, concorrência com WAL, JOINs, agregação, subconsultas, <code>CASE</code>, <code>CAST</code>, funções de texto, restrições e, na 0.12, tudo o que estava planejado para a v1.0 (abaixo).</p>
       </div>
 
       <div class="stage">
-        <h3>v1.0 · API estável e testes obsessivos <span class="tag">próxima</span></h3>
-        <p class="when">O que falta para chamar de versão estável.</p>
+        <h3>v1.0 · API estável e testes obsessivos <span class="tag done">pronta na 0.12</span></h3>
+        <p class="when">O que faltava para chamar de versão estável.</p>
         <ol>
-          <li><b>Formato do arquivo congelado.</b> Hoje ele ainda pode mudar, e antes da v1.0 não há migração: um banco criado hoje pode não abrir numa versão futura. Na v1.0, o formato fica documentado e com política de compatibilidade (versão no cabeçalho, recusar versão futura, semver na API).</li>
-          <li><b>API com parâmetros:</b> <code>prepare</code>, <code>bind</code>, <code>step</code>, <code>reset</code> e <code>finalize</code>, com <code>?</code>, <code>?N</code> e <code>:nome</code> no SQL. Sem isso, um programa precisa montar o SQL como texto, o que é incômodo e abre espaço para SQL injection.</li>
+          <li><b>Formato do arquivo congelado</b>, documentado byte a byte e com política de compatibilidade: versão no cabeçalho, versão futura recusada sem tocar no arquivo, semver na API.</li>
+          <li><b>API com parâmetros:</b> <code>prepare</code>, <code>bind</code>, <code>step</code>, <code>reset</code> e <code>finalize</code>, com <code>?</code>, <code>?N</code> e <code>:nome</code> no SQL, sem precisar montar SQL como texto.</li>
           <li><b>Fuzzing</b> com <code>cargo-fuzz</code>: SQL arbitrário e arquivos de banco corrompidos, sempre sem panic.</li>
-          <li>Códigos de erro estáveis (<code>Busy</code>, <code>Corrupt</code>, <code>Constraint</code>, <code>Misuse</code>...).</li>
+          <li>Códigos de erro estáveis, com os números do SQLite.</li>
           <li>Recompilação automática de um comando preparado quando o schema muda.</li>
           <li>Queda de energia simulada em toda a suíte de testes, não só nas transações.</li>
-          <li>Cobertura de testes medida (meta: 90% nos módulos de armazenamento e da VM).</li>
-          <li>Parte do corpus de conformidade <i>sqllogictest</i> do SQLite como teste.</li>
-          <li>Opcional: uma API C (<code>extern "C"</code> com header gerado), para usar de outras linguagens.</li>
+          <li>Cobertura de testes medida: 94,7% das linhas, acima da meta de 90% nos módulos de armazenamento e da VM.</li>
+          <li>6106 consultas do corpus de conformidade <i>sqllogictest</i> do SQLite como teste.</li>
+          <li>Uma API C no formato da do SQLite, com header para C e C++.</li>
         </ol>
+      </div>
+
+      <div class="stage">
+        <h3>Driver JDBC <span class="tag">próxima</span></h3>
+        <p class="when">Para abrir bancos EDSQLite em ferramentas como o DBeaver.</p>
+        <ul>
+          <li>Um driver JDBC sobre a API C.</li>
+          <li>Vários comandos em execução ao mesmo tempo na mesma conexão (ler um resultado enquanto roda outra consulta), como as ferramentas de banco fazem.</li>
+          <li><code>last_insert_rowid</code>, para as chaves geradas de um INSERT.</li>
+          <li>Biblioteca e API C nos downloads das releases.</li>
+        </ul>
       </div>
 
       <div class="stage">
@@ -285,9 +313,9 @@ edsqlite --version</code></pre>
         <p class="when">Os mais usados primeiro.</p>
         <ul>
           <li><b>Restrições:</b> <code>CHECK</code>, <code>AUTOINCREMENT</code>, chaves estrangeiras e <code>ON CONFLICT</code>/<code>REPLACE</code>.</li>
-          <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>.</li>
+          <li><b>Consultas:</b> <code>LEFT JOIN</code>, <code>UNION</code>/<code>INTERSECT</code>/<code>EXCEPT</code>, subconsultas no FROM, <code>WITH</code> (CTE), <code>USING</code>/<code>NATURAL</code>, <code>INSERT ... SELECT</code>.</li>
           <li><b>Funções:</b> <code>instr</code>, <code>printf</code>, as de data e hora e as de janela.</li>
-          <li><b>Schema:</b> <code>ALTER TABLE</code> (renomear e acrescentar colunas), <code>CREATE VIEW</code>, <code>COLLATE</code>, índices DESC.</li>
+          <li><b>Schema:</b> <code>ALTER TABLE</code> (renomear e acrescentar colunas), <code>CREATE VIEW</code>, triggers, <code>COLLATE</code>, índices DESC.</li>
         </ul>
       </div>
 

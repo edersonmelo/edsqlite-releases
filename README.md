@@ -12,9 +12,10 @@
 
 ## É estável?
 
-**Dá para usar, mas ainda não é uma versão estável.** A 0.11 serve para experimentar, aprender e
-trabalhar com dados que você pode recriar. Para dados que não podem ser perdidos, espere a v1.0:
-até lá, o formato do arquivo ainda pode mudar sem migração.
+**Dá para usar, e o formato do arquivo não muda mais.** A 0.12 tem tudo o que estava planejado
+para a v1.0: o formato está congelado e documentado, e todo banco criado desde a 0.3 vai abrir em
+todas as versões 1.x. A partir da 0.12, uma versão antiga que recebe um banco mais novo o recusa sem tocar nele. Ela
+ainda sai como pré-lançamento, antes do selo de v1.0.
 
 ## O que já tem
 
@@ -25,7 +26,11 @@ até lá, o formato do arquivo ainda pode mudar sem migração.
 - **Índices e planner**, com `EXPLAIN` e `EXPLAIN QUERY PLAN`.
 - **Transações duráveis:** commit atômico mesmo com queda de energia ou `kill -9`.
 - **Concorrência:** várias conexões, com locks e modo WAL.
-- **Conferido contra o SQLite 3.53** em mais de 8 milhões de consultas geradas, sem divergência.
+- **Comandos preparados** (`prepare`/`bind`/`step`, com `?`, `?N` e `:nome`), recompilados sozinhos quando o schema muda, e códigos de erro com os números do SQLite.
+- **Formato do arquivo congelado**, documentado byte a byte e com política de compatibilidade.
+- **API C** no formato da API C do SQLite (ainda não distribuída nas releases, que trazem só o `edsqlite` de linha de comando).
+- **Conferido contra o SQLite 3.53** em mais de 8 milhões de consultas geradas e em 6106 consultas do corpus oficial *sqllogictest*, sem divergência.
+- **Testado com queda de energia** em toda a suíte (uns 5800 crashes simulados por execução), fuzzing noturno e 94,7% das linhas cobertas.
 
 ## Instalação
 
@@ -39,7 +44,7 @@ Baixe o `.tar.gz` do seu sistema na [última release](https://github.com/ederson
 | Linux, ARM64 (estático) | `edsqlite-<versão>-linux-arm64.tar.gz` |
 
 ```bash
-tar xzf edsqlite-0.11.0-macos-arm64.tar.gz
+tar xzf edsqlite-0.12.0-macos-arm64.tar.gz
 sudo mv edsqlite /usr/local/bin/
 edsqlite --version
 ```
@@ -69,10 +74,10 @@ script: `edsqlite dados.db < script.sql`.
 
 ## Roadmap
 
-A próxima versão é a **v1.0**: formato do arquivo congelado e documentado, API com parâmetros
-(`prepare`/`bind`/`step`), fuzzing, códigos de erro estáveis e mais testes. Depois vêm
-`CHECK` e chaves estrangeiras, `LEFT JOIN`, `UNION`, `ALTER TABLE`,
-mais funções (`instr`, `printf`, datas) e locks no Windows. O roadmap
+A 0.12 fecha tudo o que estava planejado para a **v1.0**. O próximo passo é um **driver JDBC**,
+para abrir bancos EDSQLite em ferramentas como o DBeaver. Depois vêm `CHECK` e chaves
+estrangeiras, `LEFT JOIN`, `UNION`, views, `ALTER TABLE`, mais funções (`instr`, `printf`, datas)
+e locks no Windows. O roadmap
 completo está na [página](https://edersonmelo.github.io/edsqlite-releases/#roadmap).
 
 ---
